@@ -44,16 +44,10 @@ def cb_audio_proc(in_data, frame_count, time_info, status):
     
     # 原音の開始地点の取得
     r0 = (x[1][0])**2
-    # r0 = r0/r0
-    if r0 > 0:
-        print("OK")
+
         
     # 受信音の開始地点の取得
     r1 = ([0][0])**2
-    r1 = r1/r1
-    cr1 = np.convolve(r1, np.array([1.0/100 for i in range(100)]), mode='same')
-    cr1[cr1==1] = 1
-    cr1[cr1!=1] = 0
 
     # print('---------')
     print(r1)
