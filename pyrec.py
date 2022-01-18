@@ -6,6 +6,7 @@ import signal
 
 #####################
 ## 仮想のステレオマイク
+## x[0] R(受信音), x[1] L(原音)
 CHANNELS = 2
 FS = 44100
 ########################
@@ -15,33 +16,34 @@ FORMAT = pyaudio.paInt16 # フォーマット
 ########################
 
 # グローバルデータ
-cnt = 0
-count = 0
-count1 = 0
-data = 0
+# 開始判定
+start_L = 0
+start_R = 0
+# 開始時間
+sound_L = 0
+sound_R = 0
+# 遅延時間
 leatancy = 0
 # 録音した音声データの取り出し（コールバック）
 def cb_audio_proc(in_data, frame_count, time_info, status):
-    # global audio_seq
-    global cnt,data,data1,count,count1,leatancy
-    x=np.frombuffer(in_data, dtype=np.int16).reshape(CHUNK,CHANNELS).T # frombufferで高速に16bitデータ取り出し(スキャン方向に注意)
-    # x[0] R(受信音)
-    # # x[1] L(原音)
-    v = np.max(np.abs(x))
-    cnt += 1
+    global sound_L, sound_R, start_L, start_R, leatancy
+    x = np.frombuffer(in_data, dtype = np.int16).reshape(CHUNK, CHANNELS).T # frombufferで高速に16bitデータ取り出し(スキャン方向に注意)
     t = (time.perf_counter_ns()-T0)/(10**9)
+    
     # 原音の開始取得
     r0 = (x[1][0])**2
-    if r0 > 0 and count == 0:
-            data = t
-            count += 1
+    if r0 > 0 and start_L == 0:
+            sound_L = t
+            start_L += 1
+
     # 受信音の開始取得
     r1 = (x[0][0])**2
-    if r1 > 0 and count1 == 0:
-            data1 = t
-            count1 += 1
-    # 差分取得
-    latancy = data1-data
+    if r1 > 0 and start_R == 0:
+            sound_R = t
+            start_R += 1
+
+    # 遅延時間取得
+    latancy = sound_R-sound_L
     print('\r%10.3f[sec]' % (latancy), end = '')
         
     return None, pyaudio.paContinue
