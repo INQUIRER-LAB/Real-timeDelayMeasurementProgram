@@ -1,49 +1,26 @@
 # スペクトルアナライザプログラム（鷹合研）
-#
-# 準備(Linux Mint20.2にて動作確認済み）：
-#  sudo apt-get install python3-pigpio python3-scipy python3-pyaudio
-#  sudo apt-get install python3-matplotlib
-#
-# 入力するオーディオデバイスの設定などに使うと良い
-#   sudo apt-get install pavucontrol
-#
-
-from asyncore import read
-from itertools import count
-import sys
-from time import time
-from typing import Counter
 import pyaudio
-import datetime
 import time
 import numpy as np
 import signal
 
 #####################
-#
-#  適宜変更
-#
-
 ## 仮想のステレオマイク
 CHANNELS = 2
 FS = 44100
-
 ########################
-#
-#  変更は必要ないかも
- 
+## オーディオ設定
 CHUNK=1024    # オーディオデバイスと1回でやりとりするサンプル点数(チャンネルあたり)
 FORMAT = pyaudio.paInt16 # フォーマット
+########################
 
 # グローバルデータ
-# VIEW_SEC = 5  # 録音可能時間（秒）
-# audio_seq = np.zeros( (CHANNELS, VIEW_SEC * FS) )   # 音声信号の系列(モノラル)
 cnt = 0
 count = 0
 count1 = 0
 data = 0
 leatancy = 0
-#   録音した音声データの取り出し（コールバック）
+# 録音した音声データの取り出し（コールバック）
 def cb_audio_proc(in_data, frame_count, time_info, status):
     # global audio_seq
     global cnt,data,data1,count,count1,leatancy
@@ -63,6 +40,7 @@ def cb_audio_proc(in_data, frame_count, time_info, status):
     if r1 > 0 and count1 == 0:
             data1 = t
             count1 += 1
+    # 差分取得
     latancy = data1-data
     print('\r%10.3f[sec]' % (latancy), end = '')
         
