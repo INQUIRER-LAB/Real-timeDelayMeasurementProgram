@@ -33,19 +33,20 @@ def cb_audio_proc(in_data, frame_count, time_info, status):
     
     # 原音の開始取得
     r0 = (x[1][0])**2
-    if r0 > 0 and start_L == 0:
+    if r0 > 0.5 and start_L == 0:
             sound_L = t
             start_L += 1
 
     # 受信音の開始取得
     r1 = (x[0][0])**2
-    if r1 > 0 and start_R == 0:
+    if r1 > 0.5 and start_R == 0:
             sound_R = t
             start_R += 1
 
     # 遅延時間取得
-    latancy = sound_R-sound_L
-    print('\r%10.3f[sec]' % (latancy), end = '')
+    if sound_L != 0 and sound_R != 0:
+        latancy = sound_R-sound_L
+        print('\r%10.3f[sec]' % (latancy), end = '')
         
     return None, pyaudio.paContinue
 
