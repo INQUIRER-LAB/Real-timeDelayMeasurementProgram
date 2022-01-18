@@ -14,7 +14,6 @@ FS = 44100
 CHUNK=1024    # オーディオデバイスと1回でやりとりするサンプル点数(チャンネルあたり)
 FORMAT = pyaudio.paInt16 # フォーマット
 ########################
-
 # グローバルデータ
 # 開始判定
 start_L = 0
@@ -24,6 +23,8 @@ sound_L = 0
 sound_R = 0
 # 遅延時間
 leatancy = 0
+########################
+
 # 録音した音声データの取り出し（コールバック）
 def cb_audio_proc(in_data, frame_count, time_info, status):
     global sound_L, sound_R, start_L, start_R, leatancy
