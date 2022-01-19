@@ -51,7 +51,6 @@ def cb_audio_proc(in_data, frame_count, time_info, status):
         print('\r%10.3f[sec]' % (latancy), end = '')
     else:
         print('\r   処理中@_@  ',end='')
-    print('\r%4d'%cr0,end='')
     return None, pyaudio.paContinue
 
 # メインルーチン
