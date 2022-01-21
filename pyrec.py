@@ -49,6 +49,7 @@ def cb_audio_proc(in_data, frame_count, time_info, status):
     if sound_L != 0 and sound_R != 0:
         latancy = sound_R-sound_L
         print('\r%10.3f[sec]' % (latancy), end = '')
+        exit()
     else:
         print('\r   処理中@_@  ',end='')
     return None, pyaudio.paContinue
