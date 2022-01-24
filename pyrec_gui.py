@@ -28,7 +28,6 @@ import numpy as np
 from scipy.signal import spectrogram
  
 import signal
-# import pigpio    # ネットワーク上のRaspiのGPIOピンを制御する
  
  
 #####################
@@ -101,7 +100,7 @@ class GUI(QWidget):
         self.axes1.grid()
         self.axes1.set_yticks( np.arange( AUDIO_SIG_RANGE[0], AUDIO_SIG_RANGE[1]+1, (AUDIO_SIG_RANGE[1]-AUDIO_SIG_RANGE[0])/8) )
         self.axes1.set_xticks( np.arange( 0, VIEW_SEC+1, 1) )
-        self.axes1.set_ylabel('Audio wave', fontsize=FONT_SZ)
+        self.axes1.set_ylabel('Received sound', fontsize=FONT_SZ)
  
  
 
@@ -115,7 +114,7 @@ class GUI(QWidget):
         self.axes2.grid()
         self.axes2.set_yticks( np.arange( AUDIO_SIG_RANGE[0], AUDIO_SIG_RANGE[1]+1, (AUDIO_SIG_RANGE[1]-AUDIO_SIG_RANGE[0])/8) )
         self.axes2.set_xticks( np.arange( 0, VIEW_SEC+1, 1) )
-        self.axes2.set_ylabel('Audio wave', fontsize=FONT_SZ)
+        self.axes2.set_ylabel('Original sound', fontsize=FONT_SZ)
  
         # キャンバスのナビゲーションバーを隠す
         self.toolbar = NavigationToolbar(self.canvas, self)
@@ -139,7 +138,7 @@ class GUI(QWidget):
         self.spin2.setPrefix("検知する振幅のしきい値 : ")
         self.mylayout.addWidget(self.spin2)
  
-        self.lbl1 = QLabel('AA',self)
+        self.lbl1 = QLabel('Diff: %7.3f[msec]' % 0, self)
         self.mylayout.addWidget(self.lbl1)
 
         # ボタン1
