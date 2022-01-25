@@ -203,7 +203,24 @@ class GUI(QWidget):
                         "QPushButton:pressed { background-color: darkblue }" )         
     
     def myact_button3(self):
-        playsound("/home/nakamura/play.wav") 
+        # playsound("/home/nakamura/play.wav")
+        global wf
+        global pa 
+        global data
+        global stream
+
+        wf = wave.open('/home/nakamura/play.wav', 'rb')
+        pa = pyaudio.PyAudio()
+        stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()), channels=2, rate=wf.getframerate(), output=True)
+        data = wf.readframes(-1)
+
+        while data != '':
+            stream.write(data)
+            data = wf.readframes(-1)
+        
+        stream.stop_stream()
+        stream.close()
+        pa.terminate()
  
     # 定期的に実行する処理（Matplotlibの画面更新や，PWM信号の送出など）
     def update_fig(self):
