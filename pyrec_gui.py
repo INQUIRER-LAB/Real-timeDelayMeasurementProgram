@@ -1,4 +1,4 @@
-# スペクトルアナライザプログラム（鷹合研）
+# ピンガー（鷹合研）
 #
 # 準備(Linux Mint20.2にて動作確認済み）：
 #  sudo apt-get install python3-pigpio python3-scipy python3-pyaudio
@@ -28,7 +28,7 @@ import numpy as np
 from scipy.signal import spectrogram
  
 import signal
-
+import threading
 #####################
 #
 #  適宜変更
@@ -62,7 +62,16 @@ audio_seq = np.zeros( (CHANNELS, VIEW_SEC * FS) )   # 音声信号の系列(モ�
 
 #####################################
 # WAVEファイル読み込み
-WAVE_FILE = 'in_time.wav'
+WAVE_FILE = 'test1.wav'
+
+def play_pinger():
+    global data
+    wf.rewind()
+    data  = wf.readframes(CHUNK)
+    while len(data) > 0:
+        stream.write(data)
+        data = wf.readframes(CHUNK)
+    # print('bye')
 
 #####################################
 # クラス
@@ -155,7 +164,7 @@ class GUI(QWidget):
         self.mylayout.addWidget(self.button2)
   
         # ボタン3
-        self.button3 = QPushButton('Play',self)
+        self.button3 = QPushButton('Test Pinger ',self)
         self.button3.clicked.connect(self.myact_button3)
         self.mylayout.addWidget(self.button3)
 
@@ -203,15 +212,14 @@ class GUI(QWidget):
             self.button2.setStyleSheet(
                         "QPushButton { color: white; background-color: blue; border-radius: 5px; font-size: 20pt}"
                         "QPushButton:pressed { background-color: darkblue }" )         
-    
+
+    # ボタン3が押された時のコールバック
     def myact_button3(self):
-        global data
-        wf.rewind()
-        data  = wf.readframes(CHUNK)
-        while len(data) > 0:
-            stream.write(data)
-            data = wf.readframes(CHUNK)
- 
+        t1=threading.Thread(target=play_pinger)
+        t1.setDaemon(True)
+        t1.start()
+
+
     # 定期的に実行する処理（Matplotlibの画面更新や，PWM信号の送出など）
     def update_fig(self):
         self.line1.set_ydata( audio_seq[0,:] )
@@ -234,7 +242,6 @@ class GUI(QWidget):
 #####################################
 # 関数
  
- 
 #   録音した音声データの取り出し（コールバック）
 def cb_audio_proc(in_data, frame_count, time_info, status):
     global audio_seq
@@ -255,6 +262,9 @@ def main():
     global SAMPLEWIDTH
     global stream
     global wf
+    global t1
+
+    wf_stat = False
 
     # AUDIO-RECORDING
     p = pyaudio.PyAudio()
@@ -276,7 +286,6 @@ def main():
 
     # waveに書き出すための準備
     SAMPLEWIDTH=p.get_sample_size(FORMAT)
-    wf_stat = False
 
     # GUI
     app = QApplication(sys.argv)
