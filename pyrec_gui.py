@@ -19,7 +19,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pyaudio
 from matplotlib import gridspec
-from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -160,9 +159,7 @@ class GUI(QWidget):
         self.timer.timeout.connect(self.update_fig)
  
         # 1度，ボタンを押したことにする
-        self.myact_button1()
- 
- 
+        self.myact_button1() 
  
     # ボタン1が押された時のコールバック
     def myact_button1(self):
