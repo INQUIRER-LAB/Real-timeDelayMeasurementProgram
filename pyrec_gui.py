@@ -29,8 +29,6 @@ from scipy.signal import spectrogram
  
 import signal
 
-from playsound import playsound
-
 #####################
 #
 #  適宜変更
@@ -61,7 +59,10 @@ UPDATE_TICK_MS = 10   # 画面表示の更新間隔(ミリ秒単位)
 #####################################
 # グローバルデータ
 audio_seq = np.zeros( (CHANNELS, VIEW_SEC * FS) )   # 音声信号の系列(モノラル)
-  
+
+#####################################
+WAVE_FILE = 'test1.wav'
+
 #####################################
 # クラス
 class GUI(QWidget):
@@ -203,24 +204,12 @@ class GUI(QWidget):
                         "QPushButton:pressed { background-color: darkblue }" )         
     
     def myact_button3(self):
-        # playsound("/home/nakamura/play.wav")
-        global wf
-        global pa 
         global data
-        global stream
-
-        wf = wave.open('/home/nakamura/play.wav', 'rb')
-        pa = pyaudio.PyAudio()
-        stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()), channels=2, rate=wf.getframerate(), output=True)
-        data = wf.readframes(-1)
-
-        while data != '':
+        wf.rewind()
+        data  = wf.readframes(CHUNK)
+        while len(data) > 0:
             stream.write(data)
-            data = wf.readframes(-1)
-        
-        stream.stop_stream()
-        stream.close()
-        pa.terminate()
+            data = wf.readframes(CHUNK)
  
     # 定期的に実行する処理（Matplotlibの画面更新や，PWM信号の送出など）
     def update_fig(self):
@@ -263,7 +252,8 @@ def main():
     global pi
     global wf_stat
     global SAMPLEWIDTH
-    global p
+    global stream
+    global wf
 
     # AUDIO-RECORDING
     p = pyaudio.PyAudio()
@@ -273,7 +263,16 @@ def main():
                 input=True, 
                 frames_per_buffer=CHUNK,
                 stream_callback=cb_audio_proc)
- 
+
+    wf = wave.open(WAVE_FILE, "rb")
+    p2 = pyaudio.PyAudio()
+    stream = p2.open(format=p2.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    frames_per_buffer=CHUNK,
+                    output=True
+                    )
+
     # waveに書き出すための準備
     SAMPLEWIDTH=p.get_sample_size(FORMAT)
     wf_stat = False
