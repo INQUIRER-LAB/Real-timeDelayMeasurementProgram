@@ -61,7 +61,8 @@ UPDATE_TICK_MS = 10   # 画面表示の更新間隔(ミリ秒単位)
 audio_seq = np.zeros( (CHANNELS, VIEW_SEC * FS) )   # 音声信号の系列(モノラル)
 
 #####################################
-WAVE_FILE = 'test1.wav'
+# WAVEファイル読み込み
+WAVE_FILE = 'in_time.wav'
 
 #####################################
 # クラス
