@@ -28,8 +28,9 @@ import numpy as np
 from scipy.signal import spectrogram
  
 import signal
- 
- 
+
+from playsound import playsound
+
 #####################
 #
 #  適宜変更
@@ -151,7 +152,11 @@ class GUI(QWidget):
         self.button2.clicked.connect(self.myact_button2)
         self.mylayout.addWidget(self.button2)
   
-  
+        # ボタン3
+        self.button3 = QPushButton('Play',self)
+        self.button3.clicked.connect(self.myact_button3)
+        self.mylayout.addWidget(self.button3)
+
         # インターバルタイマー（Matplotlibの画面更新に使用）
         self.timer = QTimer()
         self.timer.setSingleShot(False)  # 連続 or 1ショットか
@@ -196,8 +201,9 @@ class GUI(QWidget):
             self.button2.setStyleSheet(
                         "QPushButton { color: white; background-color: blue; border-radius: 5px; font-size: 20pt}"
                         "QPushButton:pressed { background-color: darkblue }" )         
- 
- 
+    
+    def myact_button3(self):
+        playsound("/home/nakamura/play.wav") 
  
     # 定期的に実行する処理（Matplotlibの画面更新や，PWM信号の送出など）
     def update_fig(self):
@@ -240,8 +246,8 @@ def main():
     global pi
     global wf_stat
     global SAMPLEWIDTH
- 
- 
+    global p
+
     # AUDIO-RECORDING
     p = pyaudio.PyAudio()
     p.open(format=FORMAT,
