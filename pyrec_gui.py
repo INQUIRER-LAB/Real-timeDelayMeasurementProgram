@@ -9,26 +9,22 @@
 #
 DESC="STEREO AUDIO VIEWER (TAKAGO_LAB. 2022-01-23)"
 
-from pydoc import visiblename
+import datetime
+import signal
 import sys
+import threading
+import wave  # Waveファイルの操作
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pyaudio
+from matplotlib import gridspec
+from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
- 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
-from matplotlib import gridspec
-import matplotlib.pyplot as plt
- 
-import pyaudio
-import wave       # Waveファイルの操作
-import datetime
- 
-import numpy as np
-from scipy.signal import spectrogram
- 
-import signal
-import threading
+
 #####################
 #
 #  適宜変更
@@ -55,7 +51,6 @@ FONT_SZ = 16  # フォントサイズ
 AUDIO_SIG_RANGE = (-32768,32767)  # 音声信号の範囲
 UPDATE_TICK_MS = 10   # 画面表示の更新間隔(ミリ秒単位)
 
- 
 #####################################
 # グローバルデータ
 audio_seq = np.zeros( (CHANNELS, VIEW_SEC * FS) )   # 音声信号の系列(モノラル)
@@ -71,7 +66,6 @@ def play_pinger():
     while len(data) > 0:
         stream.write(data)
         data = wf.readframes(CHUNK)
-    # print('bye')
 
 #####################################
 # クラス
@@ -88,11 +82,9 @@ class GUI(QWidget):
  
         self.VIEW_CH=0
  
- 
         # 空の縦レイアウトを作る
         self.mylayout = QVBoxLayout()
         self.setLayout(self.mylayout)
- 
  
         # Matplotlib（準備）
         self.fig = plt.figure()
@@ -114,9 +106,6 @@ class GUI(QWidget):
         self.axes1.set_xticks( np.arange( 0, VIEW_SEC+1, 1) )
         self.axes1.set_ylabel('Received sound', fontsize=FONT_SZ)
  
- 
-
-
         # プロットの登録2（音声波形の表示）
         self.axes2 = self.fig.add_subplot(spec[1])
         self.line2, = self.axes2.plot(tt, audio_seq[self.VIEW_CH,:])
@@ -127,10 +116,6 @@ class GUI(QWidget):
         self.axes2.set_yticks( np.arange( AUDIO_SIG_RANGE[0], AUDIO_SIG_RANGE[1]+1, (AUDIO_SIG_RANGE[1]-AUDIO_SIG_RANGE[0])/8) )
         self.axes2.set_xticks( np.arange( 0, VIEW_SEC+1, 1) )
         self.axes2.set_ylabel('Original sound', fontsize=FONT_SZ)
- 
-        # キャンバスのナビゲーションバーを隠す
-        self.toolbar = NavigationToolbar(self.canvas, self)
-        self.toolbar.hide()
  
         # スピンボックス(1)...画面表示されるスペクトログラムの上限
         self.spin1 = QSpinBox()
