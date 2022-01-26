@@ -56,7 +56,7 @@ audio_seq = np.zeros( (CHANNELS, VIEW_SEC * FS) )   # 音声信号の系列(モ�
 
 #####################################
 # WAVEファイル読み込み
-WAVE_FILE = 'test1.wav'
+WAVE_FILE = 'play.wav'
 
 def play_pinger():
     global data
@@ -239,7 +239,6 @@ def cb_audio_proc(in_data, frame_count, time_info, status):
     return None, pyaudio.paContinue
  
 def main():
-    global pi
     global wf_stat
     global SAMPLEWIDTH
     global stream
