@@ -227,7 +227,6 @@ class GUI(QWidget):
 #   録音した音声データの取り出し（コールバック）
 def cb_audio_proc(in_data, frame_count, time_info, status):
     global audio_seq
-    global pwm_seq
     x=np.frombuffer(in_data, dtype=np.int16).reshape(CHUNK,CHANNELS).T # frombufferで高速に16bitデータ取り出し(スキャン方向に注意)
     ## WAVファイルに追記
     if wf_stat:
